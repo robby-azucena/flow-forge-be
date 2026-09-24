@@ -1,13 +1,16 @@
 from fastapi import FastAPI
+from fastapi.params import Depends
 
-app = FastAPI()
+from config.database import db
+from config.settings import settings
+from utils.auth_bearer import JWTBearer
+
+print("ENV check:")
+print("Allowed origins: ",settings.ALLOWED_ORIGINS)
+print("DB connection string: ",settings.DB_CONNECT_STRING)
+app = FastAPI(dependencies=[
+    Depends(db.get_session()),
+    Depends(JWTBearer())
+],redirect_slashes=True)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
