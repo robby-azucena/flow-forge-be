@@ -1,5 +1,4 @@
-from pydantic import BaseModel, SecretStr, Field
-from pydantic.v1 import EmailStr
+from pydantic import BaseModel, SecretStr, Field, EmailStr
 
 
 class UserLoginSchema(BaseModel):
