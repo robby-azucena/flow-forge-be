@@ -23,5 +23,6 @@ class UserController:
         request.state.user = user.id
 
         user_id = user.id
-        await log("user.info", method="POST", stage="REQUEST")
+        await log("user.info", method="POST", stage="REQUEST", endpoint=request.url, payload=user_form.model_dump())
 
+        new_user = self.user_service.create_user(user_form, user_id)

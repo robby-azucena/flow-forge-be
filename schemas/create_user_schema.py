@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, SecretStr, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from sqlmodel import Field
 
 
@@ -7,5 +7,5 @@ class CreateUserSchema(BaseModel):
     first_name: str = Field(...)
     last_name: str = Field(...)
     email_address: EmailStr = Field(...)
-    password: SecretStr = Field(...)
-    confirm_password: SecretStr = Field(...)
+    password: str = Field(...)
+    confirm_password: str = Field(...)

@@ -1,0 +1,12 @@
+[
+  {
+    "label": "FastAPI",
+    "adapter": "Debugpy",
+    "request": "launch",
+    "module": "uvicorn",
+    "args": [
+      "main:app",
+      "--reload"
+    ]
+  }
+]

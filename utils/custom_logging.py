@@ -9,7 +9,7 @@ from config.settings import Settings, settings
 async def log(log_file_name:str, **fields):
     month_dir = arrow.now().format('YYMM')
     day_dir = arrow.now().format('YYMMDD')
-    path = settings.LOG_PATH
+    path = settings.LOG_PATH + "/" + month_dir
 
     try:
         os.mkdir(path)
