@@ -29,7 +29,7 @@ class UserRepositories:
         try:
             hashed_password = hash_password(user.password)
             new_user = User(**user.model_dump(),
-                            hashed_password=hashed_password)
+            hashed_password=hashed_password)
             session.add(new_user)
             session.flush()
 
@@ -45,12 +45,13 @@ class UserRepositories:
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=USER_CREATION_FAILED)
         except Exception as e:
             session.rollback()
+            print(e)
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=GENERIC_ERROR)
 
     def reset_password(self, session:Session, user:User, reset_password: ResetPasswordSchema):
         try:
             user.hashed_password = hash_password(reset_password.new_password.get_secret_value())
-            user.password_changed_at = datetime.now(tz=timezone.utc)
+            user.password_change_on = datetime.now(tz=timezone.utc)
             session.add(user)
             session.flush()
             return user

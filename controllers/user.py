@@ -25,8 +25,11 @@ class UserController:
 
         await log("user.info", method="POST", stage="REQUEST", endpoint=request.url, payload=user_form.model_dump())
 
-        new_user = self.user_service.create_user(user_form)
+        new_user = await self.user_service.create_user(user_form)
+
 
         await log("user.info", method="POST", stage="RESPONSE",
                   endpoint=request.url, status_code=HTTP_201_CREATED, response_data=new_user)
-        return JSONResponse(new_user, status_code=HTTP_201_CREATED)
+
+
+        return JSONResponse("New user created:" + new_user.email_address, status_code=HTTP_201_CREATED)

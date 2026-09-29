@@ -1,10 +1,12 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import EmailStr
 from sqlmodel import SQLModel, Field, Relationship
 
+def utc_now():
+    return datetime.now(timezone.utc)
 
 class User(SQLModel, table=True):
     __tablename__ = "user"
@@ -17,9 +19,16 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True)
     session_id: str = Field(default=None, nullable=True)
 
-    password_change_on: datetime = Field(...)
-    created_on: datetime = Field(default_factory=datetime.now)
-    modified_on: Optional[datetime] = Field(default=None, sa_column_kwargs={"onupdate": datetime.now})
+    password_change_on: datetime = Field(
+        default_factory=utc_now
+    )
+    created_on: datetime = Field(
+        default_factory=utc_now
+    )
+    modified_on: Optional[datetime] = Field(
+        default=None,
+        sa_column_kwargs={"onupdate": utc_now}
+    )
 
     password_history: list["PasswordHistory"] = Relationship(back_populates="user")
 
@@ -29,7 +38,9 @@ class PasswordHistory(SQLModel, table=True):
     id:uuid.UUID = Field(primary_key=True,default_factory=uuid.uuid4)
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id", index=True)
     password_hash: str
-    changed_on: datetime = Field(default_factory=datetime.now)
+    changed_on: datetime = Field(
+        default_factory=utc_now
+    )
     user: Optional[User] = Relationship(back_populates="password_history")
 
 class UserProfile(SQLModel, table=True):
