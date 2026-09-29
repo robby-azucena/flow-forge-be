@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "test-secret-key"
     DB_CONNECT_STRING: str = "sqlite:///test.db"
     PASSWORD_ALGORITHM: str = "HS256"
-    LOG_PATH: str="./logs/"
+    LOG_PATH: str="./logs"
 
     model_config = SettingsConfigDict(
         env_file=".env",

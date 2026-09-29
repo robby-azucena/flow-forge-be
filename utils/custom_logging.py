@@ -1,6 +1,6 @@
 import os
 
-from pygments.lexers import arrow
+import arrow
 from sortedcontainers import SortedDict
 
 from config.settings import Settings, settings
@@ -9,14 +9,15 @@ from config.settings import Settings, settings
 async def log(log_file_name:str, **fields):
     month_dir = arrow.now().format('YYMM')
     day_dir = arrow.now().format('YYMMDD')
-    path = settings.LOG_PATH + "/" + month_dir
+    path = os.path.join(
+        settings.LOG_PATH,
+        month_dir,
+        day_dir,
+    )
 
-    try:
-        os.mkdir(path)
-    except Exception as e:
-        raise Exception(e)
+    os.makedirs(path, exist_ok=True)
 
-    file_path = path+"/"+day_dir+"/"+log_file_name
+    file_path = os.path.join(path, log_file_name)
     log_list=[]
 
     sorted_fields = SortedDict(fields)

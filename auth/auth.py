@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 from constants.pathname import REFRESH_TOKEN_PATH
 from constants.response_message import INVALID_ACCESS, INVALID_CRED
 from schemas.auth_schema import UserLoginSchema, RefreshTokenSchema
+from utils.auth_bearer import JWTBearer
 from utils.auth_handler import authenticate_user
 from utils.jwt_handler import sign_jwt, refresh_jwt
 
@@ -28,7 +29,7 @@ async def user_login(
     return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": INVALID_CRED})
 
 
-@router.post(REFRESH_TOKEN_PATH, tags=[tag], dependencies=[])
+@router.post(REFRESH_TOKEN_PATH, tags=[tag], dependencies=[  Depends(JWTBearer())])
 async def refresh_token(
         request: Request, token: RefreshTokenSchema
 ):

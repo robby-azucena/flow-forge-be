@@ -18,7 +18,7 @@ from utils.password_handler import hash_password
 
 
 class UserRepositories:
-    def create_user(self,session:Session, user: CreateUserSchema, user_id: UUID):
+    def create_user(self,session:Session, user: CreateUserSchema):
         profile_stm = select(UserProfile).where(UserProfile.email_address == user.email_address)
         existing_user = session.exec(profile_stm).first()
 
