@@ -1,5 +1,4 @@
 from datetime import UTC, datetime
-from uuid import UUID
 
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
@@ -14,7 +13,6 @@ from constants.response_message import (
 from models.user import User, UserProfile
 from schemas.create_user_schema import CreateUserSchema
 from schemas.reset_password_schema import ResetPasswordSchema
-from utils.custom_logging import log
 from utils.password_handler import hash_password
 
 

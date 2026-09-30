@@ -1,7 +1,8 @@
 import time
-from typing import TypedDict, Dict
+from typing import TypedDict
 
 import jwt
+from loguru import logger
 
 from config.settings import settings
 from constants.auth import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
@@ -14,6 +15,7 @@ class JWTPayload(TypedDict):
     exp: float
 
 def decode_jwt(token: str) -> dict | None:
+    logger.info("Decoding JWT...")
     try:
         decode_token = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.PASSWORD_ALGORITHM],)
         return decode_token if decode_token["exp"] >= time.time() else None
@@ -23,6 +25,7 @@ def decode_jwt(token: str) -> dict | None:
         return None
 
 def verify_jwt(jwt_token: str) -> bool:
+    logger.info("Verify JWT...")
     return decode_jwt(jwt_token) is not None
 
 def token_response(access_token: str, refresh_token: str):
@@ -31,8 +34,9 @@ def token_response(access_token: str, refresh_token: str):
         "refresh_token": refresh_token,
     }
 
-def sign_jwt(user_id: str, session_id: str) -> Dict[str, str]:
+def sign_jwt(user_id: str, session_id: str) -> dict[str, str]:
     current_time = time.time()
+    logger.info("Signing JWT...")
 
     payload: JWTPayload = {
         "sub": user_id,
@@ -40,17 +44,19 @@ def sign_jwt(user_id: str, session_id: str) -> Dict[str, str]:
         "iat": current_time,
         "exp": current_time + (ACCESS_TOKEN_EXPIRE_MINUTES * 60)
     }
-    access = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM)
+    access = jwt.encode(dict(payload), settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM)
 
     # Refresh
     payload["exp"] = current_time + (REFRESH_TOKEN_EXPIRE_MINUTES * 60)
-    refresh = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM)
+    refresh = jwt.encode(dict(payload), settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM)
 
+    logger.info("User token created.")
     return token_response(access, refresh)
 
-def refresh_jwt(token: str) -> Dict[str, str] | None:
+def refresh_jwt(token: str) -> dict[str, str] | None:
+    logger.info("Refreshing token...")
     payload = decode_jwt(token)
-    if "exp" in payload:
+    if payload is not None and "exp" in payload:
         current_time = time.time()
 
         # Access Generation

@@ -14,7 +14,15 @@ class UserLoginSchema(BaseModel):
         }
 
 class RefreshTokenSchema(BaseModel):
-    access_token: str = Field(...)
+    refresh_token: str = Field(...)
+
+    class Config:
+         json_schema_extra = {
+             "example":{
+                 "refresh_token": "",
+             }
+         }
+
 #
 # class UserSchema(BaseModel):
 #     fullname: str = Field(...)
