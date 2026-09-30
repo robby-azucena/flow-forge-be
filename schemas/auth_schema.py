@@ -8,7 +8,7 @@ class UserLoginSchema(BaseModel):
     class Config:
         json_schema_extra = {
             "example":{
-                "username": "admin",
+                "email_address": "admin",
                 "password": ""
             }
         }

@@ -5,11 +5,10 @@ from starlette.responses import JSONResponse
 
 from constants.pathname import REFRESH_TOKEN_PATH
 from constants.response_message import INVALID_ACCESS, INVALID_CRED
-from schemas.auth_schema import UserLoginSchema, RefreshTokenSchema
+from schemas.auth_schema import RefreshTokenSchema, UserLoginSchema
 from utils.auth_bearer import JWTBearer
 from utils.auth_handler import authenticate_user
-from utils.jwt_handler import sign_jwt, refresh_jwt
-
+from utils.jwt_handler import refresh_jwt, sign_jwt
 
 router = APIRouter()
 tag = "Token"
@@ -25,7 +24,7 @@ async def user_login(
     user = authenticate_user(email_address=user_form.email_address, password=user_form.password.get_secret_value(),
                              session_id=session_id)
     if user:
-        return sign_jwt(user,session_id)
+        return sign_jwt(str(user) , session_id)
     return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": INVALID_CRED})
 
 
