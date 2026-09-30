@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -14,6 +14,7 @@ from constants.response_message import (
 from models.user import User, UserProfile
 from schemas.create_user_schema import CreateUserSchema
 from schemas.reset_password_schema import ResetPasswordSchema
+from utils.custom_logging import log
 from utils.password_handler import hash_password
 
 
@@ -51,10 +52,11 @@ class UserRepositories:
     def reset_password(self, session:Session, user:User, reset_password: ResetPasswordSchema):
         try:
             user.hashed_password = hash_password(reset_password.new_password.get_secret_value())
-            user.password_change_on = datetime.now(tz=timezone.utc)
+            user.password_change_on = datetime.now(tz=UTC)
             session.add(user)
             session.flush()
             return user
         except Exception as e:
             session.rollback()
+            print(e)
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=GENERIC_ERROR)
