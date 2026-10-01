@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     DB_CONNECT_STRING: str = ""
     PASSWORD_ALGORITHM: str = "HS256"
     FERNET_KEY: bytes = Fernet.generate_key().decode().encode("utf-8")
+    REDIS_URL: str = ""
     LOG_PATH: str=""
 
     model_config = SettingsConfigDict(

@@ -15,12 +15,12 @@ fernet = Fernet(settings.FERNET_KEY)
 
 
 def session_handler(app: FastAPI):
-    redis_client = redis.from_url("redis://localhost:6379/0", decode_responses=True)
+    redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
     logger.info("Redis Connected.")
 
     @app.middleware("http")
     async def redis_session_middleware(request: Request, call_next):
-        logger.info("Middleware active")
+        logger.info("Access middleware")
 
         session_id = request.cookies.get(SESSION_ID)
         if not session_id:

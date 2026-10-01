@@ -1,10 +1,12 @@
 from fastapi import FastAPI
+from loguru import logger
 from starlette.middleware.cors import CORSMiddleware
 
 from config.settings import settings
 
 
 def setup_cors(app:FastAPI) -> None:
+    logger.info("Setting up CORS...")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.ALLOWED_ORIGINS,
