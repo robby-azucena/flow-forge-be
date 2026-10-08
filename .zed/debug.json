@@ -3,10 +3,9 @@
     "label": "FastAPI",
     "adapter": "Debugpy",
     "request": "launch",
-    "module": "uvicorn",
+    "module": "fastapi",
     "args": [
-      "main:app",
-      "--reload"
+      "dev",
     ]
   }
 ]
