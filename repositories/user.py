@@ -1,9 +1,10 @@
 from datetime import UTC, datetime
 
 from fastapi import HTTPException
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, select
-from starlette.status import HTTP_400_BAD_REQUEST
+from loguru import logger
+from sqlalchemy.exc import IntegrityError, MultipleResultsFound, NoResultFound
+from sqlmodel import  Session, select
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 from constants.response_message import (
     GENERIC_ERROR,
@@ -58,3 +59,17 @@ class UserRepositories:
             session.rollback()
             print(e)
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=GENERIC_ERROR)
+
+    def get_user_profile(self, session:Session, user_id):
+        logger.info("[Repositories] - Get user profile")
+        state = select(User).where(User.id== user_id)
+
+        try:
+            user:User = session.exec(state).one()
+            return user
+        except MultipleResultsFound:
+            session.rollback()
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=f"Multiple user ids found. User id: "+ user_id)
+        except NoResultFound:
+            session.rollback()
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=f"User with ID: {user_id} not found")

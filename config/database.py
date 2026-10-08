@@ -17,9 +17,8 @@ class DBConn:
 
         return self.engine
 
-    def get_session(self) -> Generator[Session]:
-        with Session(self.get_engine()) as session:
-            yield session
+    def get_session(self):
+        return Session(self.get_engine())
 
     def initialize(self) -> None:
         SQLModel.metadata.create_all(self.get_engine())

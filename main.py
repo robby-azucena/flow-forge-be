@@ -9,7 +9,9 @@ from utils.system_check import system_check
 
 system_check()
 
-app = FastAPI(dependencies=[
+app = FastAPI(
+    title="FlowForge",
+    dependencies=[
     Depends(db.get_session),
 ], redirect_slashes=True)
 

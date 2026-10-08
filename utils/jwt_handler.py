@@ -14,14 +14,23 @@ class JWTPayload(TypedDict):
     iat: float
     exp: float
 
-def decode_jwt(token: str) -> dict | None:
-    logger.info("Decoding JWT...")
+def decode_jwt(token: str) -> dict[str,str] | None:
     try:
+        logger.info("Decoding JWT...")
+        logger.info(token)
+
         decode_token = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.PASSWORD_ALGORITHM],)
-        return decode_token if decode_token["exp"] >= time.time() else None
+        logger.info(decode_token)
+
+        exp = decode_token["exp"] >= time.time()
+        logger.info(exp)
+        return decode_token if exp else None
     except jwt.ExpiredSignatureError:
+        logger.error("Expired Signature")
         return None
     except jwt.InvalidTokenError:
+        logger.error("Invalid Token")
+
         return None
 
 def verify_jwt(jwt_token: str) -> bool:
