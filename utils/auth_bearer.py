@@ -1,16 +1,20 @@
 from fastapi import HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette.requests import Request
 
-from constants.response_message import INVALID_AUTH_CODE, INVALID_AUTH_SCHEME, INVALID_TOKEN
-from utils.jwt_handler import verify_jwt, decode_jwt
+from constants.response_message import (
+    INVALID_AUTH_CODE,
+    INVALID_AUTH_SCHEME,
+    INVALID_TOKEN,
+)
+from utils.jwt_handler import decode_jwt, verify_jwt
 
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request):
+    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
         credentials: HTTPAuthorizationCredentials | None = await super().__call__(
             request
         )
@@ -30,4 +34,4 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(status_code=403, detail=INVALID_TOKEN)
 
         request.state.user = payload["sub"]
-        return credentials.credentials
+        return credentials
