@@ -27,6 +27,7 @@ def session_handler(app: FastAPI):
             logger.info(f"Creating {SESSION_ID}")
 
             session_id = str(uuid.uuid4())
+            logger.info(f"Sessiond: {session_id}")
             request.state.session = {SESSION_ID: session_id}
         else:
             logger.info(f"Has {SESSION_ID}")
@@ -55,16 +56,17 @@ def session_handler(app: FastAPI):
             max_age=SESSION_EXPIRY,
         )
 
-
         return response
 
-def encrypt_session_data(data:dict) -> str:
+
+def encrypt_session_data(data: dict) -> str:
     logger.info("Encrypt session")
     json_data = json.dumps(data)
     encrypted = fernet.encrypt(json_data.encode())
     return encrypted.decode()
 
-def decrypt_session_data(token:str) -> dict:
+
+def decrypt_session_data(token: str) -> dict:
     logger.info("Decrypt session")
 
     decrypted = fernet.decrypt(token.encode())
