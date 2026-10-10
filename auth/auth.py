@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Response
 from loguru import logger
 from starlette import status
 from starlette.requests import Request
@@ -8,7 +8,6 @@ from constants.names import SESSION_ID
 from constants.pathname import REFRESH_TOKEN_PATH
 from constants.response_message import INVALID_ACCESS, INVALID_CRED
 from schemas.auth_schema import RefreshTokenSchema, UserLoginSchema
-from utils.auth_bearer import JWTBearer
 from utils.auth_handler import authenticate_user
 from utils.jwt_handler import refresh_jwt, sign_jwt
 
@@ -17,7 +16,7 @@ tag = "Token"
 
 
 @router.post("/", tags=[tag], dependencies=[])
-async def user_login(request: Request, user_form: UserLoginSchema):
+async def user_login(request: Request, response: Response, user_form: UserLoginSchema):
     logger.info("Getting token")
     session_id = ""
     if SESSION_ID in request.state.session:
@@ -30,23 +29,63 @@ async def user_login(request: Request, user_form: UserLoginSchema):
         password=user_form.password.get_secret_value(),
         session_id=session_id,
     )
-    if user:
-        logger.info("Has user")
+    if not user:
+        logger.error(INVALID_CRED)
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN, content={"detail": INVALID_CRED}
+        )
 
-        return sign_jwt(str(user), session_id)
-    logger.error(INVALID_CRED)
-    return JSONResponse(
-        status_code=status.HTTP_403_FORBIDDEN, content={"detail": INVALID_CRED}
+    token = sign_jwt(str(user), session_id)
+
+    response.set_cookie(
+        key="access_token",
+        value=token.access_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",  # "none" only if truly cross-site
+        max_age=15 * 60,  # match access token expiry
+        path="/token",
     )
+    response.set_cookie(
+        key="refresh_token",
+        value=token.refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60,  # match refresh token expiry
+        path="/token",  # adjust to your real refresh route
+    )
+
+    return {"detail": "Logged in"}
 
 
 @router.post(REFRESH_TOKEN_PATH, tags=[tag], dependencies=[])
-async def refresh_token(request: Request, token: RefreshTokenSchema):
+async def refresh_token(
+    request: Request, response: Response, token: RefreshTokenSchema
+):
     new_token = refresh_jwt(token.refresh_token)
 
     if new_token:
         logger.info("New token success")
 
+        response.set_cookie(
+            key="access_token",
+            value=new_token.access_token,
+            httponly=True,
+            secure=True,
+            samesite="lax",  # "none" only if truly cross-site
+            max_age=15 * 60,  # match access token expiry
+            path="/token/refresh",
+        )
+        response.set_cookie(
+            key="refresh_token",
+            value=new_token.refresh_token,
+            httponly=True,
+            secure=True,
+            samesite="lax",
+            max_age=7 * 24 * 60 * 60,  # match refresh token expiry
+            path="/token/refresh",  # adjust to your real refresh route
+        )
         return new_token
     else:
         logger.error(INVALID_ACCESS)
