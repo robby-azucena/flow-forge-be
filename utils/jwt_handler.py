@@ -6,7 +6,7 @@ from loguru import logger
 from pydantic import BaseModel
 
 from config.settings import settings
-from constants.auth import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
+from constants.auth import get_expiration_session
 
 
 class JWTPayload(TypedDict):
@@ -58,14 +58,14 @@ def sign_jwt(user_id: str, session_id: str) -> TokenPair:
         "sub": user_id,
         "session_id": session_id,
         "iat": current_time,
-        "exp": current_time + (ACCESS_TOKEN_EXPIRE_MINUTES * 60),
+        "exp": get_expiration_session("access"),
     }
     access = jwt.encode(
         dict(payload), settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
     )
 
     # Refresh
-    payload["exp"] = current_time + (REFRESH_TOKEN_EXPIRE_MINUTES * 60)
+    payload["exp"] = (get_expiration_session("refresh"),)
     refresh = jwt.encode(
         dict(payload), settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
     )
@@ -81,12 +81,12 @@ def refresh_jwt(token: str) -> TokenPair | None:
         current_time = time.time()
 
         # Access Generation
-        payload["exp"] = current_time + (ACCESS_TOKEN_EXPIRE_MINUTES * 60)
+        payload["exp"] = (get_expiration_session("access"),)
         access = jwt.encode(
             payload, settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
         )
 
-        payload["exp"] = current_time + (REFRESH_TOKEN_EXPIRE_MINUTES * 60)
+        payload["exp"] = (get_expiration_session("refresh"),)
         refresh = jwt.encode(
             payload, settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
         )
