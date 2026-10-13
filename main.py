@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.params import Depends
 
+from config import ip_whitelist
 from config.cors import setup_cors
 from config.database import db
 from config.routes import register_routes
@@ -18,3 +19,4 @@ app = FastAPI(
 setup_cors(app)
 register_routes(app)
 session_handler(app)
+ip_whitelist.setup_ip_whitelist(app)
