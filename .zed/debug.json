@@ -1,0 +1,11 @@
+[
+  {
+    "label": "FastAPI",
+    "adapter": "Debugpy",
+    "request": "launch",
+    "module": "fastapi",
+    "args": [
+      "dev",
+    ]
+  }
+]
