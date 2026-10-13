@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.params import Depends
 
-from config import ip_whitelist
-from config.cors import setup_cors
+from config.cors import origin_blocker, setup_cors
 from config.database import db
 from config.routes import register_routes
 from utils.session_handler import session_handler
@@ -19,4 +18,4 @@ app = FastAPI(
 setup_cors(app)
 register_routes(app)
 session_handler(app)
-ip_whitelist.setup_ip_whitelist(app)
+origin_blocker(app)
