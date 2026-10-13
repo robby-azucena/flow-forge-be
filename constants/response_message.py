@@ -9,6 +9,7 @@ INVALID_ACCESS="Invalid Access."
 
 GENERIC_ERROR="Something went wrong."
 
+IP_NOT_ALLOWED="Forbidden"
 
 USER_ALREADY_EXISTS="User already exists."
 USER_NOT_FOUND="User not found"
