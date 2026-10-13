@@ -9,4 +9,3 @@ def system_check():
     logger.warning(f"Database string: {settings.DB_CONNECT_STRING  != ""}")
     logger.warning(f"Log path: {settings.LOG_PATH}")
     logger.warning(f"Redis URL: {settings.REDIS_URL != ""}")
-    logger.warning(f"Allowed IPs: {len(settings.ALLOWED_IPS.split(','))}")
