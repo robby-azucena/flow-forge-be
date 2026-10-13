@@ -4,7 +4,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     ALLOWED_ORIGINS: list[str] = []
-    ALLOWED_IPS: str
     SECRET_KEY: str = "test-secret-key"
     DB_CONNECT_STRING: str = ""
     PASSWORD_ALGORITHM: str = "HS256"
