@@ -19,7 +19,6 @@ class JWTPayload(TypedDict):
 def decode_jwt(token: str) -> dict[str, str] | None:
     try:
         logger.info("Decoding JWT...")
-        logger.info(token)
 
         decode_token = jwt.decode(
             token,
