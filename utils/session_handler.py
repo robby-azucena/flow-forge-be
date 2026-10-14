@@ -48,6 +48,8 @@ def session_handler(app: FastAPI):
             session_id, SESSION_EXPIRY, json.dumps(request.state.session)
         )
 
+        print(session_id)
+
         response.set_cookie(
             session_id,
             httponly=True,
