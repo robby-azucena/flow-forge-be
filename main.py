@@ -17,5 +17,5 @@ app = FastAPI(
 
 setup_cors(app)
 register_routes(app)
-session_handler(app)
+# session_handler(app) # NOTE - Disabled for public portfolio. It should have dedicated redis server.
 origin_blocker(app)
