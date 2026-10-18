@@ -35,7 +35,7 @@ class UserController:
         )
 
         if user_form.password != user_form.confirm_password:
-            print("Passwords do not match")
+            logger.error("Passwords do not match")
             return JSONResponse(
                 "Passwords do not match", status_code=HTTP_400_BAD_REQUEST
             )

@@ -23,8 +23,9 @@ def origin_blocker(app: FastAPI):
     async def block_unknown_origins(request: Request, call_next):
         logger.info("Origin blocker check")
         base_url = request.base_url
-        print(request.base_url)
+        logger.info(request.base_url)
         if base_url and base_url not in settings.ALLOWED_ORIGINS or base_url is None:
+            logger.info("URL Denied")
             return JSONResponse(
                 {"detail": "Access denied"}, status_code=HTTP_403_FORBIDDEN
             )

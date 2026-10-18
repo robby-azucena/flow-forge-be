@@ -50,7 +50,7 @@ class UserRepositories:
             )
         except Exception as e:
             session.rollback()
-            print(e)
+            logger.error(e)
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=GENERIC_ERROR)
 
     def reset_password(
@@ -66,7 +66,7 @@ class UserRepositories:
             return user
         except Exception as e:
             session.rollback()
-            print(e)
+            logger.error(e)
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=GENERIC_ERROR)
 
     def get_user_profile(self, session: Session, user_id):

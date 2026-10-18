@@ -19,10 +19,13 @@ tag = "Token"
 async def user_login(request: Request, response: Response, user_form: UserLoginSchema):
     logger.info("Getting token")
     session_id = ""
-    if SESSION_ID in request.state.session:
+
+    session = getattr(request.state, "session", None) or {}
+    if SESSION_ID in session:
         logger.info(f"Has {SESSION_ID}")
 
         session_id = request.state.session[SESSION_ID]
+        logger.info("Getting token")
 
     user = authenticate_user(
         email_address=user_form.email_address,
@@ -36,6 +39,7 @@ async def user_login(request: Request, response: Response, user_form: UserLoginS
         )
 
     token = sign_jwt(str(user), session_id)
+    logger.info("JWT Signed")
 
     response.set_cookie(
         key="access_token",

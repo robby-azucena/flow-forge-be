@@ -55,9 +55,11 @@ def authenticate_user(email_address: str, password: str, session_id: str):
 
         if not user or not verify_password(password, user.hashed_password):
             logger.error(INVALID_CRED)
-            raise HTTPException(status_code=401, detail=INVALID_CRED)
+            raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=INVALID_CRED)
 
         user.session_id = session_id
+        logger.info("Authenticated")
+
         session.flush()
         session.refresh(user)
         return user.id
