@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     FERNET_KEY: bytes = Fernet.generate_key().decode().encode("utf-8")
     REDIS_URL: str = ""
     LOG_PATH: str = ""
+    DEV_MODE: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
