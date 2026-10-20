@@ -64,7 +64,7 @@ def sign_jwt(user_id: str, session_id: str) -> TokenPair:
     )
 
     # Refresh
-    payload["exp"] = (get_expiration_session("refresh"),)
+    payload["exp"] = get_expiration_session("refresh")
     refresh = jwt.encode(
         dict(payload), settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
     )
@@ -77,15 +77,14 @@ def refresh_jwt(token: str) -> TokenPair | None:
     logger.info("Refreshing token...")
     payload = decode_jwt(token)
     if payload is not None and "exp" in payload:
-        current_time = time.time()
 
         # Access Generation
-        payload["exp"] = (get_expiration_session("access"),)
+        payload["exp"] = get_expiration_session("access")
         access = jwt.encode(
             payload, settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
         )
 
-        payload["exp"] = (get_expiration_session("refresh"),)
+        payload["exp"] = get_expiration_session("refresh")
         refresh = jwt.encode(
             payload, settings.SECRET_KEY, algorithm=settings.PASSWORD_ALGORITHM
         )
