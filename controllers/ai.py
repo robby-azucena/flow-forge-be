@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from fastapi.exceptions import HTTPException
 from fastapi_utils.cbv import cbv
+from loguru import logger
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_CONTENT
 
 from schemas.document_schema import (
@@ -18,7 +19,7 @@ tag = "AI"
 @cbv(router)
 class AIController:
     @router.post(
-        "/analyze",
+        "/analyze/",
         tags=[tag],
         response_model=DocumentAnalysisResponseSchema,
         dependencies=[Depends(JWTBearer())],
@@ -30,6 +31,7 @@ class AIController:
         question: Annotated[str, Form(...)],
     ):
         request.state.audit_event = "DOC_ANALYZE"
+        logger.info("Analyzing Document...")
 
         doc_file = file
         doc_question = question
